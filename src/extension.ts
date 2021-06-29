@@ -1,26 +1,78 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode"
+import condenser from "./condenser"
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-condenser" is now active!');
+    let state: {
+        filter: string
+        ranges: vscode.FoldingRange[]
+        highlights: vscode.DocumentHighlight[]
+    } = {
+        filter: "",
+        ranges: [],
+        highlights: [],
+    }
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vscode-condenser.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Foldable Search Filter!');
-	});
+    context.subscriptions.push(
+        vscode.commands.registerCommand("condenser.start", async () => {
+            let editor = vscode.window.activeTextEditor
+            if (!editor) {
+                return
+            }
+            vscode.commands.executeCommand("setContext", "condenser.showMenu", true)
 
-	context.subscriptions.push(disposable);
+            const filter = await vscode.window.showInputBox({
+                value: state.filter,
+                placeHolder: "enter a text string or a regular expression...",
+                validateInput: (text) => {
+                    try {
+                        new RegExp(text)
+                    } catch (e) {
+                        return "not a valid regular expression"
+                    }
+                },
+            })
+            if (filter) {
+                state.filter = filter
+                condenser(state, editor.document)
+                foldingRangeProvider.onDidChangeEmitter.fire()
+                vscode.commands.executeCommand("editor.foldAll", {})
+            } else {
+                state = { filter: "", ranges: [], highlights: [] }
+                foldingRangeProvider.onDidChangeEmitter.fire()
+                vscode.commands.executeCommand("setContext", "condenser.showMenu", false)
+            }
+        }),
+
+        vscode.commands.registerCommand("condenser.collapse.all", async () => {
+            vscode.commands.executeCommand("editor.foldAll", {})
+        }),
+
+        vscode.commands.registerCommand("condenser.expand.all", async () => {
+            vscode.commands.executeCommand("editor.unfoldAll", {})
+        }),
+
+        vscode.commands.registerCommand("condenser.stop", async () => {
+            state = { filter: "", ranges: [], highlights: [] }
+            foldingRangeProvider.onDidChangeEmitter.fire()
+            vscode.commands.executeCommand("setContext", "condenser.showMenu", false)
+        })
+    )
+
+    let foldingRangeProvider = new (class implements vscode.FoldingRangeProvider {
+        provideFoldingRanges(document: vscode.TextDocument) {
+            return state.ranges
+        }
+        onDidChangeEmitter = new vscode.EventEmitter<void>()
+        onDidChangeFoldingRanges = this.onDidChangeEmitter.event
+    })()
+    context.subscriptions.push(vscode.languages.registerFoldingRangeProvider({ scheme: "file" }, foldingRangeProvider))
+
+    let highlightProvider = new (class implements vscode.DocumentHighlightProvider {
+        provideDocumentHighlights(document: vscode.TextDocument) {
+            return state.highlights
+        }
+    })()
+    context.subscriptions.push(vscode.languages.registerDocumentHighlightProvider({ scheme: "file" }, highlightProvider))
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}

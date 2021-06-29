@@ -1,45 +1,128 @@
 {
-	"name": "vscode-condenser",
-	"displayName": "Foldable Search Filter",
-	"description": "View Editor Contents through a RegEx Search Filter with Folding.",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.57.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:vscode-condenser.helloWorld"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "vscode-condenser.helloWorld",
-				"title": "Hello World"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.57.0",
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.2.2",
-		"@types/node": "14.x",
-		"eslint": "^7.27.0",
-		"@typescript-eslint/eslint-plugin": "^4.26.0",
-		"@typescript-eslint/parser": "^4.26.0",
-		"glob": "^7.1.7",
-		"mocha": "^8.4.0",
-		"typescript": "^4.3.2",
-		"vscode-test": "^1.5.2"
-	}
+    "name": "condenser",
+    "displayName": "Contents condenser",
+    "description": "View editor contents through a regular expressions filter",
+    "version": "0.0.1",
+    "publisher": "ryeden",
+    "engines": {
+        "vscode": "^1.57.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "license": "MIT",
+    "activationEvents": [
+        "onCommand:condenser.start"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "condenser.start",
+                "title": "Condense start",
+                "when": "editorFocus && editorIsOpen"
+            },
+            {
+                "command": "condenser.collapse.all",
+                "title": "Condense collapse",
+                "icon": {
+                    "light": "./resources/light/collapse-all.svg",
+                    "dark": "resources/dark/collapse-all.svg"
+                },
+                "when": "condenser.showMenu"
+            },
+            {
+                "command": "condenser.expand.all",
+                "title": "Condense expand",
+                "icon": {
+                    "light": "./resources/light/expand-all.svg",
+                    "dark": "resources/dark/expand-all.svg"
+                },
+                "when": "condenser.showMenu"
+            },
+            {
+                "command": "condenser.stop",
+                "title": "Condense stop",
+                "icon": {
+                    "light": "./resources/light/stop.svg",
+                    "dark": "resources/dark/stop.svg"
+                },
+                "when": "condenser.showMenu"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "condenser.start",
+                "key": "ctrl+'",
+                "mac": "cmd+'",
+                "when": "editorFocus && editorIsOpen"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "condenser.collapse.all",
+                    "group": "navigation",
+                    "when": "condenser.showMenu"
+                },
+                {
+                    "command": "condenser.expand.all",
+                    "group": "navigation",
+                    "when": "condenser.showMenu"
+                },
+                {
+                    "command": "condenser.stop",
+                    "group": "navigation",
+                    "when": "condenser.showMenu"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "condenser.start",
+                    "when": "editorFocus && editorIsOpen"
+                },
+                {
+                    "command": "condenser.collapse.all",
+                    "when": "condenser.showMenu"
+                },
+                {
+                    "command": "condenser.expand.all",
+                    "when": "condenser.showMenu"
+                },
+                {
+                    "command": "condenser.stop",
+                    "when": "condenser.showMenu"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.2.2",
+        "@types/node": "14.x",
+        "@types/vscode": "^1.57.0",
+        "@typescript-eslint/eslint-plugin": "^4.26.0",
+        "@typescript-eslint/parser": "^4.26.0",
+        "eslint": "^7.27.0",
+        "glob": "^7.1.7",
+        "mocha": "^8.4.0",
+        "typescript": "^4.3.2",
+        "vscode-test": "^1.5.2"
+    },
+    "bugs": {
+        "url": "https://github.com/ryeden/vscode-condenser/issues"
+    },
+    "homepage": "https://github.com/ryeden/vscode-condenser/blob/master/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ryeden/vscode-condenser.git"
+    }
 }

@@ -1,6 +1,6 @@
-# vscode-condenser README
+# condenser README
 
-This is the README for your extension "vscode-condenser". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "condenser". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
