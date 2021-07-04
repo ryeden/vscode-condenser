@@ -32,8 +32,8 @@ export function activate(context: vscode.ExtensionContext) {
                 },
             })
             if (filter) {
-                state.filter = filter
-                condenser(state, editor.document)
+                let [ranges, highlights] = condenser(editor.document, filter)
+                state = { filter: filter, ranges: ranges, highlights: highlights }
                 foldingRangeProvider.onDidChangeEmitter.fire()
                 vscode.commands.executeCommand("editor.foldAll", {})
             } else {
