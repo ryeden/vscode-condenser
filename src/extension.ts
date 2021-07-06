@@ -44,8 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerDocumentHighlightProvider({ scheme: "file" }, highlightProvider))
 
     let inputBox = vscode.window.createInputBox()
-    inputBox.prompt = "Content Condenser"
-    inputBox.placeholder = "enter a text string or a regular expression..."
+    inputBox.prompt = "Log Condenser"
+    inputBox.placeholder = "Condense: enter text or regular expression..."
     context.subscriptions.push(inputBox)
 
     function processUserInput(text: string) {

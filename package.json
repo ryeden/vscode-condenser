@@ -1,26 +1,40 @@
 {
     "name": "condenser",
-    "displayName": "Contents condenser",
-    "description": "View editor contents through a regular expressions filter",
-    "version": "0.0.1",
-    "publisher": "ryeden",
+    "version": "0.1.0",
+    "preview": true,
+    "publisher": "Ryeden Software",
+    "author": {
+        "name": "Jaroslav Ovtsyn",
+        "email": "jvo@ryeden.com"
+    },
+    "displayName": "Log Condenser",
+    "description": "View log files through a foldable text/regex filter",
+    "categories": [
+        "Visualization"
+    ],
+    "keywords": [
+        "log",
+        "view",
+        "regex",
+        "filter",
+        "fold"
+    ],
+    "license": "MIT",
+    "markdown": "github",
+    "icon": "resources/icon.png",
     "engines": {
         "vscode": "^1.57.0"
     },
-    "categories": [
-        "Other"
-    ],
-    "license": "MIT",
+    "main": "./out/extension.js",
     "activationEvents": [
         "onCommand:condenser.start"
     ],
-    "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
                 "command": "condenser.start",
                 "title": "Condense start",
-                "when": "editorFocus && editorIsOpen"
+                "when": "editorIsOpen"
             },
             {
                 "command": "condenser.collapse.all",
@@ -55,7 +69,7 @@
                 "command": "condenser.start",
                 "key": "ctrl+'",
                 "mac": "cmd+'",
-                "when": "editorFocus && editorIsOpen"
+                "when": "editorIsOpen"
             },
             {
                 "command": "condenser.prev",
@@ -89,7 +103,7 @@
             "commandPalette": [
                 {
                     "command": "condenser.start",
-                    "when": "editorFocus && editorIsOpen"
+                    "when": "editorIsOpen"
                 },
                 {
                     "command": "condenser.collapse.all",
@@ -127,12 +141,12 @@
         "typescript": "^4.3.2",
         "vscode-test": "^1.5.2"
     },
-    "bugs": {
-        "url": "https://github.com/ryeden/vscode-condenser/issues"
-    },
     "homepage": "https://github.com/ryeden/vscode-condenser/blob/master/README.md",
     "repository": {
         "type": "git",
         "url": "https://github.com/ryeden/vscode-condenser.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ryeden/vscode-condenser/issues"
     }
 }
