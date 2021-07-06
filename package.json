@@ -2,7 +2,7 @@
     "name": "condenser",
     "version": "0.1.0",
     "preview": true,
-    "publisher": "Ryeden Software",
+    "publisher": "ryeden",
     "author": {
         "name": "Jaroslav Ovtsyn",
         "email": "jvo@ryeden.com"
@@ -40,8 +40,8 @@
                 "command": "condenser.collapse.all",
                 "title": "Condense collapse",
                 "icon": {
-                    "light": "./resources/light/collapse-all.svg",
-                    "dark": "resources/dark/collapse-all.svg"
+                    "light": "./resources/light/collapse-all.png",
+                    "dark": "resources/dark/collapse-all.png"
                 },
                 "when": "condenser.active"
             },
@@ -49,8 +49,8 @@
                 "command": "condenser.expand.all",
                 "title": "Condense expand",
                 "icon": {
-                    "light": "./resources/light/expand-all.svg",
-                    "dark": "resources/dark/expand-all.svg"
+                    "light": "./resources/light/expand-all.png",
+                    "dark": "resources/dark/expand-all.png"
                 },
                 "when": "condenser.active"
             },
@@ -58,8 +58,8 @@
                 "command": "condenser.stop",
                 "title": "Condense stop",
                 "icon": {
-                    "light": "./resources/light/stop.svg",
-                    "dark": "resources/dark/stop.svg"
+                    "light": "./resources/light/stop.png",
+                    "dark": "resources/dark/stop.png"
                 },
                 "when": "condenser.active"
             }

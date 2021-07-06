@@ -7,6 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adding support for multipe per-editor filters.
 
-## [0.1.0] - 20201-07-06
+## [0.1.0] - 20201-07-10
 
 - Initial release.
