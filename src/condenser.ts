@@ -1,8 +1,15 @@
 import * as vscode from "vscode"
 
-export default function (document: vscode.TextDocument, filter: string): [vscode.FoldingRange[], vscode.DocumentHighlight[]] {
+export default function (
+    document: vscode.TextDocument,
+    filter: string
+): {
+    ranges: vscode.FoldingRange[]
+    highlights: vscode.DocumentHighlight[]
+} {
     let ranges: vscode.FoldingRange[] = []
     let highlights: vscode.DocumentHighlight[] = []
+
     if (filter.length) {
         try {
             let regExp = new RegExp(filter, "g")
@@ -37,5 +44,5 @@ export default function (document: vscode.TextDocument, filter: string): [vscode
             }
         } catch (e) {}
     }
-    return [ranges, highlights]
+    return { ranges: ranges, highlights: highlights }
 } // condenser()

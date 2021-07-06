@@ -29,7 +29,7 @@
                     "light": "./resources/light/collapse-all.svg",
                     "dark": "resources/dark/collapse-all.svg"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             },
             {
                 "command": "condenser.expand.all",
@@ -38,7 +38,7 @@
                     "light": "./resources/light/expand-all.svg",
                     "dark": "resources/dark/expand-all.svg"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             },
             {
                 "command": "condenser.stop",
@@ -47,7 +47,7 @@
                     "light": "./resources/light/stop.svg",
                     "dark": "resources/dark/stop.svg"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             }
         ],
         "keybindings": [
@@ -56,6 +56,16 @@
                 "key": "ctrl+'",
                 "mac": "cmd+'",
                 "when": "editorFocus && editorIsOpen"
+            },
+            {
+                "command": "condenser.prev",
+                "key": "up",
+                "when": "condenser.active && condenser.inputBox"
+            },
+            {
+                "command": "condenser.next",
+                "key": "down",
+                "when": "condenser.active && condenser.inputBox"
             }
         ],
         "menus": {
@@ -63,17 +73,17 @@
                 {
                     "command": "condenser.collapse.all",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.expand.all",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.stop",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 }
             ],
             "commandPalette": [
@@ -83,15 +93,15 @@
                 },
                 {
                     "command": "condenser.collapse.all",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.expand.all",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.stop",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 }
             ]
         }
