@@ -1,53 +1,67 @@
 {
     "name": "condenser",
-    "displayName": "Contents condenser",
-    "description": "View editor contents through a regular expressions filter",
-    "version": "0.0.1",
+    "version": "0.1.0",
+    "preview": true,
     "publisher": "ryeden",
+    "author": {
+        "name": "Jaroslav Ovtsyn",
+        "email": "jvo@ryeden.com"
+    },
+    "displayName": "Log Condenser",
+    "description": "View log files through a foldable text / regular expression filter",
+    "categories": [
+        "Visualization"
+    ],
+    "keywords": [
+        "log",
+        "view",
+        "regex",
+        "filter",
+        "fold"
+    ],
+    "license": "MIT",
+    "markdown": "github",
+    "icon": "resources/icon.png",
     "engines": {
         "vscode": "^1.57.0"
     },
-    "categories": [
-        "Other"
-    ],
-    "license": "MIT",
+    "main": "./out/extension.js",
     "activationEvents": [
         "onCommand:condenser.start"
     ],
-    "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
                 "command": "condenser.start",
                 "title": "Condense start",
-                "when": "editorFocus && editorIsOpen"
+                "when": "editorIsOpen"
             },
             {
                 "command": "condenser.collapse.all",
                 "title": "Condense collapse",
                 "icon": {
-                    "light": "./resources/light/collapse-all.svg",
-                    "dark": "resources/dark/collapse-all.svg"
+                    "light": "./resources/light/collapse-all.png",
+                    "dark": "resources/dark/collapse-all.png"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             },
             {
                 "command": "condenser.expand.all",
                 "title": "Condense expand",
                 "icon": {
-                    "light": "./resources/light/expand-all.svg",
-                    "dark": "resources/dark/expand-all.svg"
+                    "light": "./resources/light/expand-all.png",
+                    "dark": "resources/dark/expand-all.png"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             },
             {
                 "command": "condenser.stop",
                 "title": "Condense stop",
                 "icon": {
-                    "light": "./resources/light/stop.svg",
-                    "dark": "resources/dark/stop.svg"
+                    "light": "./resources/light/stop.png",
+                    "dark": "resources/dark/stop.png"
                 },
-                "when": "condenser.showMenu"
+                "when": "condenser.active"
             }
         ],
         "keybindings": [
@@ -55,7 +69,17 @@
                 "command": "condenser.start",
                 "key": "ctrl+'",
                 "mac": "cmd+'",
-                "when": "editorFocus && editorIsOpen"
+                "when": "editorIsOpen"
+            },
+            {
+                "command": "condenser.prev",
+                "key": "up",
+                "when": "condenser.active && condenser.inputBox"
+            },
+            {
+                "command": "condenser.next",
+                "key": "down",
+                "when": "condenser.active && condenser.inputBox"
             }
         ],
         "menus": {
@@ -63,35 +87,35 @@
                 {
                     "command": "condenser.collapse.all",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.expand.all",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.stop",
                     "group": "navigation",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 }
             ],
             "commandPalette": [
                 {
                     "command": "condenser.start",
-                    "when": "editorFocus && editorIsOpen"
+                    "when": "editorIsOpen"
                 },
                 {
                     "command": "condenser.collapse.all",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.expand.all",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 },
                 {
                     "command": "condenser.stop",
-                    "when": "condenser.showMenu"
+                    "when": "condenser.active"
                 }
             ]
         }
@@ -117,12 +141,12 @@
         "typescript": "^4.3.2",
         "vscode-test": "^1.5.2"
     },
-    "bugs": {
-        "url": "https://github.com/ryeden/vscode-condenser/issues"
-    },
     "homepage": "https://github.com/ryeden/vscode-condenser/blob/master/README.md",
     "repository": {
         "type": "git",
         "url": "https://github.com/ryeden/vscode-condenser.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ryeden/vscode-condenser/issues"
     }
 }
