@@ -6,24 +6,22 @@ const LIVE_INPUT_UPDATE_DELAY = 200 // in msec
 export function activate(context: vscode.ExtensionContext) {
     let state: {
         document: vscode.TextDocument | undefined
-        filter: {
-            hist: string[]
-            pos: number
-        }
+        histData: string[]
+        histPos: number
         view: {
             ranges: vscode.FoldingRange[]
             highlights: vscode.DocumentHighlight[]
         }
+        accepted: boolean
     } = {
         document: undefined,
-        filter: {
-            hist: [""],
-            pos: 0,
-        },
+        histData: [""],
+        histPos: -1,
         view: {
             ranges: [],
             highlights: [],
         },
+        accepted: false,
     }
 
     let foldingRangeProvider = new (class implements vscode.FoldingRangeProvider {
@@ -46,6 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
     let inputBox = vscode.window.createInputBox()
     inputBox.prompt = "Log Condenser"
     inputBox.placeholder = "Condense: enter text or regular expression..."
+    inputBox.ignoreFocusOut = true
     context.subscriptions.push(inputBox)
 
     function processUserInput(text: string) {
@@ -69,6 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand(inputBox.validationMessage ? "editor.unfoldAll" : "editor.foldAll", {})
             vscode.commands.executeCommand("editor.action.wordHighlight.trigger", {})
         }
+        return !inputBox.validationMessage
     }
 
     let throttle = new (class implements vscode.Disposable {
@@ -104,6 +104,8 @@ export function activate(context: vscode.ExtensionContext) {
                 if (inputBox.value) {
                     processUserInput(inputBox.value)
                 }
+                state.accepted = false
+                state.histPos = -1
                 inputBox.show()
                 vscode.commands.executeCommand("setContext", "condenser.active", true)
                 vscode.commands.executeCommand("setContext", "condenser.inputBox", true)
@@ -121,44 +123,48 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         inputBox.onDidAccept(async () => {
-            // User pressed ENTER - save the entered value for future reference
-            let text = inputBox.value
+            // User pressed ENTER
             throttle.dispose()
-            if (!state.filter.hist[0]) {
-                state.filter.hist[0] = text // no prior history - replace the zero-element
-            } else if (state.filter.hist[0] !== text) {
-                state.filter.hist.splice(0, 0, text) // push history back
-            }
+            let text = inputBox.value
             if (text.length) {
-                processUserInput(text)
+                if (processUserInput(text)) {
+                    // this input value is valid - save the entered value for future reference
+                    if (!state.histData[0]) {
+                        state.histData[0] = text // no prior history - replace the zero-element
+                    } else if (state.histData[0] !== text) {
+                        state.histData.splice(0, 0, text) // push history back
+                    }
+                }
             } else {
                 // treat pressing ENTER on an empty empty the same as cliking the close button
                 closeInputBox()
             }
+            state.accepted = true
             inputBox.hide() // this triggers onDidHide()
         }),
 
         inputBox.onDidHide(() => {
-            // User pressed ESC or clicked away
+            // User pressed ESC
             inputBox.validationMessage = ""
             vscode.commands.executeCommand("setContext", "condenser.inputBox", false)
+            !state.accepted && vscode.commands.executeCommand("editor.unfoldAll", {})
         }),
 
         // ***** Input Box History ***** //
 
         vscode.commands.registerCommand("condenser.prev", async () => {
-            if (++state.filter.pos >= state.filter.hist.length) {
-                state.filter.pos = state.filter.hist.length - 1
+            if (++state.histPos >= state.histData.length) {
+                state.histPos = state.histData.length - 1
             }
-            inputBox.value = state.filter.hist[state.filter.pos]
+            inputBox.value = state.histData[state.histPos]
             processUserInput(inputBox.value)
         }),
         vscode.commands.registerCommand("condenser.next", async () => {
-            if (--state.filter.pos < 0) {
-                state.filter.pos = 0
+            if (--state.histPos < 0) {
+                state.histPos = -1
                 inputBox.value = ""
             } else {
-                inputBox.value = state.filter.hist[state.filter.pos]
+                inputBox.value = state.histData[state.histPos]
             }
             processUserInput(inputBox.value)
         }),

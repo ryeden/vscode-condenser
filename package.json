@@ -8,7 +8,7 @@
         "email": "jvo@ryeden.com"
     },
     "displayName": "Log Condenser",
-    "description": "View log files through a foldable text/regex filter",
+    "description": "View log files through a foldable text / regular expression filter",
     "categories": [
         "Visualization"
     ],
