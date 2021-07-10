@@ -4,9 +4,11 @@ This extension lets you view files through a filter specified with a *text strin
 
 This tool is intended primary as a *log viewer* to make browsing through large files manageable and more convenient.
 
+![Demo Video](resources/demo.gif)
+
 ## Usage
 
-### How to Activate
+### How to Start Condensing
 
 - Open a file and start **Log Condenser** with `Ctrl+'` (`⌘'`), or...
 - Open a file and start **Log Condenser** with `Ctrl+Shift+P` (`⇧⌘P`) then enter "`Condense start`"
@@ -28,7 +30,7 @@ This tool is intended primary as a *log viewer* to make browsing through large f
 - Click ![Condense expand](resources/expand-all.png) button to unfold the entire file
 - Click ![Condense collapse](resources/collapse-all.png) button to fold the entire file
 
-### How to Deactivate
+### How to Stop Condensing
 
 - Click ![Condense stop](resources/stop.png) (close) button in the editor toolbar, or...
 - In **Condenser**'s input box, clear the text and press `Enter`
