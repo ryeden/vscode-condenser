@@ -19,12 +19,12 @@ This tool is intended primary as a *log viewer* to make browsing through large f
 
 - Once in **Condenser**'s input box, start typing to see the file's contents collapse, or...
 - Select text inside editor, then [activate](#How-to-Activate) **Condenser** to see the selected text applied as a filter automatically
-- Use `Up` / `Down` keys to browse through history in the input box
+- Inside the **Condenser**'s input box use `Up` / `Down` keys to browse through history 
 - Pressing `Enter` saves current filter in history, pressing `Esc` does not
 
 ### How to Navigate
 
-- Click a *folding icon* (on the gutter between line numbers and line start) to hide reveal filtered text
+- Click a *folding icon* (on the gutter between line numbers and line start) to hide / reveal filtered text
 - Press `Ctrl+Shift+]` (`⌥⌘]`) to expand the fold under the cursor
 - Press `Ctrl+Shift+[` (`⌥⌘[`) to collapse the fold under the cursor
 - Click ![Condense expand](resources/expand-all.png) button to unfold the entire file
@@ -37,4 +37,4 @@ This tool is intended primary as a *log viewer* to make browsing through large f
 
 ### Known Issues
 
-- As **Log Condenser** does not check file types, folding may get confused when applied on structured content such as JSON, HTML, JS etc (for which folding is already provided by a language support package)
+- As **Log Condenser** does not check file types, folding may get confused when applied on structured content such as in JSON, HTML, JS etc files (for which folding is already provided by a language support package)

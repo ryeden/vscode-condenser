@@ -12,7 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
             ranges: vscode.FoldingRange[]
             highlights: vscode.DocumentHighlight[]
         }
-        accepted: boolean
     } = {
         document: undefined,
         histData: [""],
@@ -21,7 +20,6 @@ export function activate(context: vscode.ExtensionContext) {
             ranges: [],
             highlights: [],
         },
-        accepted: false,
     }
 
     let foldingRangeProvider = new (class implements vscode.FoldingRangeProvider {
@@ -44,7 +42,6 @@ export function activate(context: vscode.ExtensionContext) {
     let inputBox = vscode.window.createInputBox()
     inputBox.prompt = "Log Condenser"
     inputBox.placeholder = "Condense: enter text or regular expression..."
-    inputBox.ignoreFocusOut = true
     context.subscriptions.push(inputBox)
 
     function processUserInput(text: string) {
@@ -82,20 +79,17 @@ export function activate(context: vscode.ExtensionContext) {
     })()
     context.subscriptions.push(throttle)
 
-    function closeInputBox() {
+    function condenserStop() {
         throttle.dispose()
         inputBox.hide()
         state.view = { ranges: [], highlights: [] }
-        if (state.document) {
-            foldingRangeProvider.onDidChangeEmitter.fire()
-            vscode.commands.executeCommand("editor.unfoldAll", {})
-        }
         state.document = undefined
-        vscode.commands.executeCommand("setContext", "condenser.active", false)
+        vscode.commands.executeCommand("setContext", "condense.active", [])
+        foldingRangeProvider.onDidChangeEmitter.fire()
     }
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("condenser.start", async () => {
+        vscode.commands.registerCommand("condense.start", async () => {
             const editor = vscode.window.activeTextEditor
             if (editor) {
                 state.document = editor.document
@@ -104,11 +98,11 @@ export function activate(context: vscode.ExtensionContext) {
                 if (inputBox.value) {
                     processUserInput(inputBox.value)
                 }
-                state.accepted = false
                 state.histPos = -1
                 inputBox.show()
-                vscode.commands.executeCommand("setContext", "condenser.active", true)
-                vscode.commands.executeCommand("setContext", "condenser.inputBox", true)
+                vscode.commands.executeCommand("setContext", "condense.active", [state.document.uri.fsPath])
+                vscode.commands.executeCommand("setContext", "condense.inputBox", true)
+                foldingRangeProvider.onDidChangeEmitter.fire()
             }
         }),
 
@@ -137,29 +131,27 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             } else {
                 // treat pressing ENTER on an empty empty the same as cliking the close button
-                closeInputBox()
+                condenserStop()
             }
-            state.accepted = true
             inputBox.hide() // this triggers onDidHide()
         }),
 
         inputBox.onDidHide(() => {
             // User pressed ESC
             inputBox.validationMessage = ""
-            vscode.commands.executeCommand("setContext", "condenser.inputBox", false)
-            !state.accepted && vscode.commands.executeCommand("editor.unfoldAll", {})
+            vscode.commands.executeCommand("setContext", "condense.inputBox", false)
         }),
 
         // ***** Input Box History ***** //
 
-        vscode.commands.registerCommand("condenser.prev", async () => {
+        vscode.commands.registerCommand("condense.prev", async () => {
             if (++state.histPos >= state.histData.length) {
                 state.histPos = state.histData.length - 1
             }
             inputBox.value = state.histData[state.histPos]
             processUserInput(inputBox.value)
         }),
-        vscode.commands.registerCommand("condenser.next", async () => {
+        vscode.commands.registerCommand("condense.next", async () => {
             if (--state.histPos < 0) {
                 state.histPos = -1
                 inputBox.value = ""
@@ -171,14 +163,14 @@ export function activate(context: vscode.ExtensionContext) {
 
         // ***** Editor Title Buttons ***** //
 
-        vscode.commands.registerCommand("condenser.collapse.all", async () => {
+        vscode.commands.registerCommand("condense.collapse.all", async () => {
             vscode.commands.executeCommand("editor.foldAll", {})
         }),
-        vscode.commands.registerCommand("condenser.expand.all", async () => {
+        vscode.commands.registerCommand("condense.expand.all", async () => {
             vscode.commands.executeCommand("editor.unfoldAll", {})
         }),
-        vscode.commands.registerCommand("condenser.stop", async () => {
-            closeInputBox()
+        vscode.commands.registerCommand("condense.stop", async () => {
+            condenserStop()
         })
     )
 }

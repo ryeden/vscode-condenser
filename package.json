@@ -1,6 +1,6 @@
 {
     "name": "condenser",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "preview": true,
     "publisher": "ryeden",
     "author": {
@@ -27,98 +27,98 @@
     },
     "main": "./out/extension.js",
     "activationEvents": [
-        "onCommand:condenser.start"
+        "onCommand:condense.start"
     ],
     "contributes": {
         "commands": [
             {
-                "command": "condenser.start",
+                "command": "condense.start",
                 "title": "Condense start",
-                "when": "editorIsOpen"
+                "when": "inputFocus"
             },
             {
-                "command": "condenser.collapse.all",
+                "command": "condense.collapse.all",
                 "title": "Condense collapse",
                 "icon": {
                     "light": "./resources/light/collapse-all.png",
                     "dark": "resources/dark/collapse-all.png"
                 },
-                "when": "condenser.active"
+                "when": "inputFocus && resourcePath in condense.active"
             },
             {
-                "command": "condenser.expand.all",
+                "command": "condense.expand.all",
                 "title": "Condense expand",
                 "icon": {
                     "light": "./resources/light/expand-all.png",
                     "dark": "resources/dark/expand-all.png"
                 },
-                "when": "condenser.active"
+                "when": "inputFocus && resourcePath in condense.active"
             },
             {
-                "command": "condenser.stop",
+                "command": "condense.stop",
                 "title": "Condense stop",
                 "icon": {
                     "light": "./resources/light/stop.png",
                     "dark": "resources/dark/stop.png"
                 },
-                "when": "condenser.active"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "condenser.start",
-                "key": "ctrl+'",
-                "mac": "cmd+'",
-                "when": "editorIsOpen"
-            },
-            {
-                "command": "condenser.prev",
-                "key": "up",
-                "when": "condenser.active && condenser.inputBox"
-            },
-            {
-                "command": "condenser.next",
-                "key": "down",
-                "when": "condenser.active && condenser.inputBox"
+                "when": "inputFocus && resourcePath in condense.active"
             }
         ],
         "menus": {
             "editor/title": [
                 {
-                    "command": "condenser.collapse.all",
+                    "command": "condense.collapse.all",
                     "group": "navigation",
-                    "when": "condenser.active"
+                    "when": "inputFocus && resourcePath in condense.active"
                 },
                 {
-                    "command": "condenser.expand.all",
+                    "command": "condense.expand.all",
                     "group": "navigation",
-                    "when": "condenser.active"
+                    "when": "inputFocus && resourcePath in condense.active"
                 },
                 {
-                    "command": "condenser.stop",
+                    "command": "condense.stop",
                     "group": "navigation",
-                    "when": "condenser.active"
+                    "when": "inputFocus && resourcePath in condense.active"
                 }
             ],
             "commandPalette": [
                 {
-                    "command": "condenser.start",
-                    "when": "editorIsOpen"
+                    "command": "condense.start",
+                    "when": "inputFocus"
                 },
                 {
-                    "command": "condenser.collapse.all",
-                    "when": "condenser.active"
+                    "command": "condense.collapse.all",
+                    "when": "inputFocus && resourcePath in condense.active"
                 },
                 {
-                    "command": "condenser.expand.all",
-                    "when": "condenser.active"
+                    "command": "condense.expand.all",
+                    "when": "inputFocus && resourcePath in condense.active"
                 },
                 {
-                    "command": "condenser.stop",
-                    "when": "condenser.active"
+                    "command": "condense.stop",
+                    "when": "inputFocus && resourcePath in condense.active"
                 }
             ]
-        }
+        },
+        "keybindings": [
+            {
+                "command": "condense.start",
+                "key": "ctrl+'",
+                "mac": "cmd+'",
+                "when": "inputFocus"
+            },
+            {
+                "command": "condense.prev",
+                "key": "up",
+                "when": "inputFocus && resourcePath in condense.active && condense.inputBox"
+            },
+            {
+                "command": "condense.next",
+                "key": "down",
+                "when": "inputFocus && resourcePath in condense.active && condense.inputBox"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
