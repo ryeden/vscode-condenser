@@ -1,6 +1,6 @@
 {
     "name": "condenser",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "preview": true,
     "publisher": "ryeden",
     "author": {
@@ -111,12 +111,12 @@
             {
                 "command": "condense.prev",
                 "key": "up",
-                "when": "inputFocus && resourcePath in condense.active && condense.inputBox"
+                "when": "condense.inputFocus"
             },
             {
                 "command": "condense.next",
                 "key": "down",
-                "when": "inputFocus && resourcePath in condense.active && condense.inputBox"
+                "when": "condense.inputFocus"
             }
         ]
     },

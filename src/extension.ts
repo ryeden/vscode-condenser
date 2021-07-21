@@ -101,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
                 state.histPos = -1
                 inputBox.show()
                 vscode.commands.executeCommand("setContext", "condense.active", [state.document.uri.fsPath])
-                vscode.commands.executeCommand("setContext", "condense.inputBox", true)
+                vscode.commands.executeCommand("setContext", "condense.inputFocus", true)
                 foldingRangeProvider.onDidChangeEmitter.fire()
             }
         }),
@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
         inputBox.onDidHide(() => {
             // User pressed ESC
             inputBox.validationMessage = ""
-            vscode.commands.executeCommand("setContext", "condense.inputBox", false)
+            vscode.commands.executeCommand("setContext", "condense.inputFocus", false)
         }),
 
         // ***** Input Box History ***** //

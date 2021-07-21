@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adding support for multipe per-editor filters.
 
-## [0.2.0] - 20201-07-20
+## [0.2.1] - 20201-07-20
 
 - Transitions from input box to editor text refined.
 - Editor context buttons are hidden when focus changes.
