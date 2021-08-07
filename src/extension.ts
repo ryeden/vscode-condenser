@@ -3,28 +3,49 @@ import condenser from "./condenser"
 
 const LIVE_INPUT_UPDATE_DELAY = 200 // in msec
 
-export function activate(context: vscode.ExtensionContext) {
-    let state: {
-        document: vscode.TextDocument | undefined
-        histData: string[]
-        histPos: number
-        view: {
+class State {
+    filter: string = ""
+    histData = [""]
+    histPos = -1
+    view:
+        | undefined
+        | {
             ranges: vscode.FoldingRange[]
             highlights: vscode.DocumentHighlight[]
         }
-    } = {
-        document: undefined,
-        histData: [""],
-        histPos: -1,
-        view: {
-            ranges: [],
-            highlights: [],
-        },
+}
+
+export function activate(context: vscode.ExtensionContext) {
+    let store: { [key: string]: State } = {}
+
+    function getContext() {
+        const editor = vscode.window.activeTextEditor
+        if (editor) {
+            const document = editor.document
+            const state = store[document.uri.fsPath]
+            if (state) {
+                return { document, state }
+            }
+        }
+        return {}
     }
+    function getActiveList() {
+        return Object.keys(store).filter(key => store[key] && typeof store[key].view !== "undefined")
+    }
+
+    context.subscriptions.push(
+        vscode.workspace.onDidCloseTextDocument(document => {
+            delete store[document.uri.fsPath]
+            vscode.commands.executeCommand("setContext", "condense.active", getActiveList())
+        })
+    )
 
     let foldingRangeProvider = new (class implements vscode.FoldingRangeProvider {
         provideFoldingRanges(document: vscode.TextDocument) {
-            return document === state.document ? state.view.ranges : []
+            // NOTE: the documentation fails to mention that returning a null / undefined does not affect
+            // the previously provided ranges; we need to return an empty array [] to actually remove them
+            const state = store[document.uri.fsPath]
+            return state && state.view && state.view.ranges || []
         }
         onDidChangeEmitter = new vscode.EventEmitter<void>()
         onDidChangeFoldingRanges = this.onDidChangeEmitter.event
@@ -34,7 +55,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     let highlightProvider = new (class implements vscode.DocumentHighlightProvider {
         provideDocumentHighlights(document: vscode.TextDocument) {
-            return document === state.document ? state.view.highlights : []
+            const state = store[document.uri.fsPath]
+            return state && state.view && state.view.highlights
         }
     })()
     context.subscriptions.push(vscode.languages.registerDocumentHighlightProvider({ scheme: "file" }, highlightProvider))
@@ -44,27 +66,24 @@ export function activate(context: vscode.ExtensionContext) {
     inputBox.placeholder = "Condense: enter text or regular expression..."
     context.subscriptions.push(inputBox)
 
-    function processUserInput(text: string) {
-        if (state.document) {
-            inputBox.validationMessage = ""
+    function processUserInput(document: vscode.TextDocument, state: State) {
+        inputBox.validationMessage = ""
+        state.view = { ranges: [], highlights: [] }
+        if (state.filter) {
             try {
-                if (text) {
-                    new RegExp(text) // this is a validity check (throws when it's not a valid regular expression)
-                    state.view = condenser(state.document, text)
-                    if (!state.view.ranges.length) {
-                        inputBox.validationMessage = "no matches"
-                    }
+                new RegExp(state.filter) // this is a validity check (throws when it's not a valid regular expression)
+                state.view = condenser(document, state.filter)
+                if (!state.view.highlights.length) {
+                    inputBox.validationMessage = "no matches"
+                    state.view = { ranges: [], highlights: [] }
                 }
             } catch (e) {
                 inputBox.validationMessage = "not a valid regular expression"
             }
-            if (inputBox.validationMessage) {
-                state.view = { ranges: [], highlights: [] }
-            }
-            foldingRangeProvider.onDidChangeEmitter.fire()
-            vscode.commands.executeCommand(inputBox.validationMessage ? "editor.unfoldAll" : "editor.foldAll", {})
-            vscode.commands.executeCommand("editor.action.wordHighlight.trigger", {})
         }
+        foldingRangeProvider.onDidChangeEmitter.fire()
+        vscode.commands.executeCommand(inputBox.validationMessage ? "editor.unfoldAll" : "editor.foldAll", {})
+        vscode.commands.executeCommand("editor.action.wordHighlight.trigger", {})
         return !inputBox.validationMessage
     }
 
@@ -82,27 +101,35 @@ export function activate(context: vscode.ExtensionContext) {
     function condenserStop() {
         throttle.dispose()
         inputBox.hide()
-        state.view = { ranges: [], highlights: [] }
-        state.document = undefined
-        vscode.commands.executeCommand("setContext", "condense.active", [])
-        foldingRangeProvider.onDidChangeEmitter.fire()
+        const { document, state } = getContext()
+        if (document && state) {
+            state.view = undefined
+            foldingRangeProvider.onDidChangeEmitter.fire()
+            vscode.commands.executeCommand("setContext", "condense.active", getActiveList())
+        }
     }
 
     context.subscriptions.push(
         vscode.commands.registerCommand("condense.start", async () => {
             const editor = vscode.window.activeTextEditor
             if (editor) {
-                state.document = editor.document
-                let selection = editor.document.getText(new vscode.Range(editor.selection.start, editor.selection.end))
-                inputBox.value = selection || ""
-                if (inputBox.value) {
-                    processUserInput(inputBox.value)
+                const document = editor.document
+                if (!store[document.uri.fsPath]) {
+                    store[document.uri.fsPath] = new State()
                 }
+                const state = store[document.uri.fsPath]
                 state.histPos = -1
+                state.filter = document.getText(new vscode.Range(editor.selection.start, editor.selection.end))
+                if (state.filter) {
+                    processUserInput(document, state)
+                }
+                inputBox.value = state.filter
                 inputBox.show()
-                vscode.commands.executeCommand("setContext", "condense.active", [state.document.uri.fsPath])
-                vscode.commands.executeCommand("setContext", "condense.inputFocus", true)
+
                 foldingRangeProvider.onDidChangeEmitter.fire()
+                vscode.commands.executeCommand("editor.action.wordHighlight.trigger", {})
+                vscode.commands.executeCommand("setContext", "condense.inputFocus", true)
+                vscode.commands.executeCommand("setContext", "condense.active", getActiveList())
             }
         }),
 
@@ -112,7 +139,11 @@ export function activate(context: vscode.ExtensionContext) {
             // User is editing the input box's contents
             throttle.dispose()
             throttle.timer = setTimeout(() => {
-                processUserInput(text)
+                const { document, state } = getContext()
+                if (document && state) {
+                    state.filter = text
+                    processUserInput(document, state)
+                }
             }, LIVE_INPUT_UPDATE_DELAY)
         }),
 
@@ -121,12 +152,16 @@ export function activate(context: vscode.ExtensionContext) {
             throttle.dispose()
             let text = inputBox.value
             if (text.length) {
-                if (processUserInput(text)) {
-                    // this input value is valid - save the entered value for future reference
-                    if (!state.histData[0]) {
-                        state.histData[0] = text // no prior history - replace the zero-element
-                    } else if (state.histData[0] !== text) {
-                        state.histData.splice(0, 0, text) // push history back
+                const { document, state } = getContext()
+                if (document && state) {
+                    state.filter = text
+                    if (processUserInput(document, state)) {
+                        // this input value is valid - save the entered value for future reference
+                        if (!state.histData[0]) {
+                            state.histData[0] = text // no prior history - replace the zero-element
+                        } else if (state.histData[0] !== text) {
+                            state.histData.splice(0, 0, text) // push history back
+                        }
                     }
                 }
             } else {
@@ -145,20 +180,26 @@ export function activate(context: vscode.ExtensionContext) {
         // ***** Input Box History ***** //
 
         vscode.commands.registerCommand("condense.prev", async () => {
-            if (++state.histPos >= state.histData.length) {
-                state.histPos = state.histData.length - 1
+            const { document, state } = getContext()
+            if (document && state) {
+                if (++state.histPos >= state.histData.length) {
+                    state.histPos = state.histData.length - 1
+                }
+                inputBox.value = state.filter = state.histData[state.histPos]
+                processUserInput(document, state)
             }
-            inputBox.value = state.histData[state.histPos]
-            processUserInput(inputBox.value)
         }),
         vscode.commands.registerCommand("condense.next", async () => {
-            if (--state.histPos < 0) {
-                state.histPos = -1
-                inputBox.value = ""
-            } else {
-                inputBox.value = state.histData[state.histPos]
+            const { document, state } = getContext()
+            if (document && state) {
+                if (--state.histPos < 0) {
+                    state.histPos = -1
+                    inputBox.value = state.filter = ""
+                } else {
+                    inputBox.value = state.filter = state.histData[state.histPos]
+                }
+                processUserInput(document, state)
             }
-            processUserInput(inputBox.value)
         }),
 
         // ***** Editor Title Buttons ***** //
@@ -173,6 +214,8 @@ export function activate(context: vscode.ExtensionContext) {
             condenserStop()
         })
     )
+
+    console.log(`condenser: activated`)
 }
 
-export function deactivate() {}
+export function deactivate() { }
