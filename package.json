@@ -1,7 +1,7 @@
 {
     "name": "condenser",
-    "version": "0.2.1",
-    "preview": true,
+    "version": "0.3.0",
+    "preview": false,
     "publisher": "ryeden",
     "author": {
         "name": "Jaroslav Ovtsyn",
