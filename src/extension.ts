@@ -218,7 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
                 })
                     .then(() => {
                         log(`${state.fsPath}: analyze: window refresh`)
-                        inputBox.validationMessage = state.pending ? "" : state.error // don't show an error when we now another scan is coming
+                        inputBox.validationMessage = state.pending ? "" : state.error // don't show an error when we know another scan is coming
                         foldingRangeProvider.onDidChangeEmitter.fire()
                         vscode.commands.executeCommand(state.error ? "editor.unfoldAll" : "editor.foldAll", {})
                         vscode.commands.executeCommand("editor.action.wordHighlight.trigger", {})
@@ -235,7 +235,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const state = store.get(key) || store.add(key, new State(document))
                 state.histPos = -1
 
-                inputBox.value = document.getText(new vscode.Range(editor.selection.start, editor.selection.end))
+                inputBox.value = document.getText(new vscode.Range(editor.selection.start, editor.selection.end)) || state.filter
                 inputBox.validationMessage = ""
                 inputBox.show()
 
@@ -273,7 +273,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         inputBox.onDidHide(() => {
-            // User pressed ESC
+            // User pressed ENTER, pressed ESC or clicked away
             inputBox.validationMessage = ""
             vscode.commands.executeCommand("setContext", "condense.inputFocus", false)
         }),
