@@ -1,24 +1,18 @@
 {
     "root": true,
     "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module"
     },
-    "plugins": [
-        "@typescript-eslint"
-    ],
     "rules": {
         "@typescript-eslint/naming-convention": "warn",
         "@typescript-eslint/semi": "off",
         "curly": "warn",
         "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "semi": "off"
+        "no-throw-literal": "warn"
     },
-    "ignorePatterns": [
-        "out",
-        "dist",
-        "**/*.d.ts"
-    ]
+    "ignorePatterns": ["out", "dist", "**/*.d.ts"]
 }

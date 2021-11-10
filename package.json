@@ -1,6 +1,6 @@
 {
     "name": "condenser",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "preview": false,
     "publisher": "ryeden",
     "author": {
@@ -23,7 +23,8 @@
     "markdown": "github",
     "icon": "resources/icon.png",
     "engines": {
-        "vscode": "^1.57.0"
+        "vscode": "^1.57.0",
+        "npm": "^8.1.2"
     },
     "main": "./out/extension.js",
     "activationEvents": [
@@ -34,70 +35,23 @@
             {
                 "command": "condense.start",
                 "title": "Condense start",
-                "when": "inputFocus"
-            },
-            {
-                "command": "condense.collapse.all",
-                "title": "Condense collapse",
-                "icon": {
-                    "light": "./resources/light/collapse-all.png",
-                    "dark": "resources/dark/collapse-all.png"
-                },
-                "when": "inputFocus && resourcePath in condense.active"
-            },
-            {
-                "command": "condense.expand.all",
-                "title": "Condense expand",
-                "icon": {
-                    "light": "./resources/light/expand-all.png",
-                    "dark": "resources/dark/expand-all.png"
-                },
-                "when": "inputFocus && resourcePath in condense.active"
+                "when": "editorFocus"
             },
             {
                 "command": "condense.stop",
                 "title": "Condense stop",
-                "icon": {
-                    "light": "./resources/light/stop.png",
-                    "dark": "resources/dark/stop.png"
-                },
-                "when": "inputFocus && resourcePath in condense.active"
+                "when": "condense.loaded && editorFocus"
             }
         ],
         "menus": {
-            "editor/title": [
-                {
-                    "command": "condense.collapse.all",
-                    "group": "navigation",
-                    "when": "inputFocus && resourcePath in condense.active"
-                },
-                {
-                    "command": "condense.expand.all",
-                    "group": "navigation",
-                    "when": "inputFocus && resourcePath in condense.active"
-                },
-                {
-                    "command": "condense.stop",
-                    "group": "navigation",
-                    "when": "inputFocus && resourcePath in condense.active"
-                }
-            ],
             "commandPalette": [
                 {
                     "command": "condense.start",
                     "when": "inputFocus"
                 },
                 {
-                    "command": "condense.collapse.all",
-                    "when": "inputFocus && resourcePath in condense.active"
-                },
-                {
-                    "command": "condense.expand.all",
-                    "when": "inputFocus && resourcePath in condense.active"
-                },
-                {
                     "command": "condense.stop",
-                    "when": "inputFocus && resourcePath in condense.active"
+                    "when": "condense.loaded && inputFocus"
                 }
             ]
         },
@@ -106,26 +60,34 @@
                 "command": "condense.start",
                 "key": "ctrl+'",
                 "mac": "cmd+'",
-                "when": "inputFocus"
+                "when": "editorFocus"
+            },
+            {
+                "command": "condense.stop",
+                "key": "ctrl+shift+'",
+                "mac": "cmd+shift+'",
+                "when": "condense.loaded && editorFocus"
             },
             {
                 "command": "condense.prev",
                 "key": "up",
-                "when": "condense.inputFocus"
+                "when": "condense.loaded && condense.inputFocus"
             },
             {
                 "command": "condense.next",
                 "key": "down",
-                "when": "condense.inputFocus"
+                "when": "condense.loaded && condense.inputFocus"
             }
         ]
     },
     "scripts": {
+        "package": "vsce package",
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
+        "format": "prettier --write src/**/*.[jt]s",
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
@@ -138,7 +100,9 @@
         "eslint": "^7.27.0",
         "glob": "^7.1.7",
         "mocha": "^8.4.0",
+        "prettier": "^2.4.1",
         "typescript": "^4.3.2",
+        "vsce": "^2.3.0",
         "vscode-test": "^1.5.2"
     },
     "homepage": "https://github.com/ryeden/vscode-condenser/blob/master/README.md",

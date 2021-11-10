@@ -3,6 +3,10 @@
 All notable changes to the `condenser` extension will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2021-11-09
+
+- Toolbar buttons moved inside the input dialog box, so that they are shown also when working in the VSCode Remote (WSL) setup.
+
 ## [0.3.1] - 2021-08-18
 
 - Previously entered input value is restored upon extension restart.

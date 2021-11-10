@@ -1,8 +1,8 @@
 # Log Condenser
 
-This extension lets you view files through a filter specified with a *text string* or a *regular expression*. Hidden lines that don't match the filter can be easily revealed.
+This extension lets you view files through a filter specified by a *text string* or a *regular expression*. Hidden lines that don't match the filter can be easily hidden or revealed.
 
-This tool is intended primary as a *log viewer* to make browsing through large files manageable and more convenient.
+This tool is intended primary as a *log viewer* to make browsing through large text files manageable and more convenient.
 
 ![Demo Video](resources/demo.gif)
 
@@ -10,31 +10,30 @@ This tool is intended primary as a *log viewer* to make browsing through large f
 
 ### How to Start Condensing
 
-- Open a file and start **Log Condenser** with `Ctrl+'` (`⌘'`), or...
-- Open a file and start **Log Condenser** with `Ctrl+Shift+P` (`⇧⌘P`) then enter "`Condense start`"
+- When inside a text editor - press `Ctrl+'` (`⌘'`).
+- Alternatively, press `Ctrl+Shift+P` (`⇧⌘P`), then enter "`Condense start`".
 
-> *Editor toolbar* now shows an *input box* and buttons ![Condense expand](resources/expand-all.png) (expand), ![Condense collapse](resources/collapse-all.png) (collapse), and ![Condense stop](resources/stop.png) (stop).
+> **Condenser Dialog** box with buttons ![](resources/expand-all.png) (expand all), ![](resources/collapse-all.png) (collapse all), and ![](resources/stop.png) (stop condensing) is shown now at the text editor's top.
 
-### How to Set Filter
+### How to Set a Filter
 
-- Once in **Condenser**'s input box, start typing to see the file's contents collapse, or...
-- Select text inside editor, then [activate](#How-to-Activate) **Condenser** to see the selected text applied as a filter automatically
-- Inside the **Condenser**'s input box use `Up` / `Down` keys to browse through history 
-- Pressing `Enter` saves current filter in history, pressing `Esc` does not
+- Select some text inside an editor, then press `Ctrl+'` (`⌘'`); selected text is automatically applied as a filter.
+- When in **Condenser Dialog** - type text and watch the editor's contents change.
+- When in **Condenser Dialog** - use `Up` / `Down` keys to browse through history.
+- Pressing `Enter` inside **Condenser Dialog** saves the current filter in history - pressing `Esc` does not.
 
-### How to Navigate
+### How to Hide and Reveal Text
 
-- Click a *folding icon* (on the gutter between line numbers and line start) to hide / reveal filtered text
-- Press `Ctrl+Shift+]` (`⌥⌘]`) to expand the fold under the cursor
-- Press `Ctrl+Shift+[` (`⌥⌘[`) to collapse the fold under the cursor
-- Click ![Condense expand](resources/expand-all.png) button to unfold the entire file
-- Click ![Condense collapse](resources/collapse-all.png) button to fold the entire file
+- Clicking the *folding icon* on the gutter between a line's number and its text, hides or reveals folded text.
+- Click on a line inside a text editor, then press `Ctrl+Shift+]` (`⌥⌘]`) to expand the fold under that line or, alternatively, press `Ctrl+Shift+[` (`⌥⌘[`) to collapse it.
+- When in **Condenser Dialog** - click the ![](resources/expand-all.png) button to expand the entire file or the ![](resources/collapse-all.png) button to collapse it.
 
 ### How to Stop Condensing
 
-- Click ![Condense stop](resources/stop.png) (close) button in the editor toolbar, or...
-- In **Condenser**'s input box, clear the text and press `Enter`
+- Press `Ctrl+Shift+'` (`⇧⌘'`).
+- When in **Condenser Dialog** - click the ![](resources/stop.png) button or, alternatively, clear the text and then press `Enter`.
+- Press `Ctrl+Shift+P` (`⇧⌘P`), then enter "`Condense stop`".
 
 ### Known Issues
 
-- As **Log Condenser** does not check file types, folding may get confused when applied on structured content such as in JSON, HTML, JS etc files (for which folding is already provided by a language support package)
+- As **Log Condenser** does not check file types, folding may get confused when applied to structured content such as JSON, HTML, JavaScript etc, i.e. files for which folding is already provided by a language support package.
