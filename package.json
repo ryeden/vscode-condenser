@@ -24,7 +24,7 @@
     "icon": "resources/icon.png",
     "engines": {
         "vscode": "^1.57.0",
-        "npm": "^8.1.2"
+        "npm": "^7.18.1"
     },
     "main": "./out/extension.js",
     "activationEvents": [
