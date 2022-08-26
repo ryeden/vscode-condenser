@@ -11,7 +11,7 @@ function log(text: string) {
 export type View = { ranges?: FoldingRange[]; highlights?: DocumentHighlight[]; matches?: number; error?: string }
 
 export class Button {
-    constructor(public icon: QuickInputButton, public action: string) { }
+    constructor(public icon: QuickInputButton, public action: string) {}
 }
 
 export class State extends Disposable {

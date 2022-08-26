@@ -121,7 +121,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
         window.onDidChangeActiveTextEditor(() => {
             store.getAll().forEach((state) => state.closeDialog())
         })
-    );
+    )
 
     context.subscriptions.push(
         workspace.onDidCloseTextDocument((document) => {
@@ -155,6 +155,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
             const state = getState()
             state && state.setInactiveState()
             foldingRangeProvider.onDidChangeEmitter.fire()
+            commands.executeCommand("editor.unfoldAll", {})
+            commands.executeCommand("editor.action.wordHighlight.trigger", {})
         }),
 
         commands.registerCommand("condense.prev", async () => {
